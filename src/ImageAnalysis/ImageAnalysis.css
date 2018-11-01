@@ -1,0 +1,65 @@
+.ImageAnalysis {
+  display: flex;
+}
+
+.ImageAnalysis .loading {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 60px;
+  width: 60px;
+}
+
+.ImageAnalysis .header {
+  text-align: center;
+}
+
+.ImageAnalysis .imageDrop {
+  text-align: center;
+  padding: 10px;
+}
+
+.ImageAnalysis .import {
+  display: flex;
+  justify-content: center;
+}
+
+.ImageAnalysis .import .dropZone {
+  width: 350px;
+  height: 350px;
+  border-width: 2px;
+  border-color: rgb(102, 102, 102);
+  border-style: dashed;
+  border-radius: 5px;
+}
+
+.ImageAnalysis .preview {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+}
+
+.ImageAnalysis .preview Button {
+  width: 350px;
+  margin-top: 5px;
+  /* background-color: #86AB94; */
+}
+
+.ImageAnalysis .imagePreview {
+  display: 'inline';
+  width: 350px;
+  height: 350px;
+}
+
+.ImageAnalysis .ImageAnalysisButton {
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.ImageAnalysis .report {
+  /* background-color: #417956; */
+  /* background-color: #7C987C; */
+  background-color: #A9C1A9;
+  padding: 20px;
+}
