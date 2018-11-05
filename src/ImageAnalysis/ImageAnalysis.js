@@ -14,35 +14,36 @@ class ImageAnalysis extends Component {
       isLoading: false,
       queryImage: null,
       topSites: {},
+      ela: {},
       image: null
     }
 
     this.onDropImage = this.onDropImage.bind(this);
     this.resetImage = this.resetImage.bind(this);
     this.ImageAnalysis = this.ImageAnalysis.bind(this);
-    this.getTopSites = this.getTopSites.bind(this);
+    this.getImageAnalysis = this.getImageAnalysis.bind(this);
   }
 
   onDropImage(dropped_file) {
     this.setState({
       queryImage: dropped_file
     });
-    let bodyFormData = new FormData();
-    dropped_file.map((queryImg) => (
-      bodyFormData.set('queryImg', queryImg)
-    ))
-    axios({
-        method: 'post',
-        url: 'http://localhost:5000/upload',
-        data: bodyFormData,
-        config: { headers: {'Content-Type': 'multipart/form-data' }}
-      })
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      })
+    // let bodyFormData = new FormData();
+    // dropped_file.map((queryImg) => (
+    //   bodyFormData.set('queryImg', queryImg)
+    // ))
+    // axios({
+    //     method: 'post',
+    //     url: 'http://localhost:5000/upload',
+    //     data: bodyFormData,
+    //     config: { headers: {'Content-Type': 'multipart/form-data' }}
+    //   })
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   })
   }
 
   resetImage() {
@@ -53,31 +54,73 @@ class ImageAnalysis extends Component {
 
   ImageAnalysis() {
     this.setState({isLoading: true})
+    let bodyFormData = new FormData();
+    this.state.queryImage.map((queryImg) => (
+      bodyFormData.set('queryImg', queryImg)
+    ))
     axios({
         method: 'post',
-        url: 'http://localhost:5000/analyze',
-        config: { headers: {'Content-Type': 'application/json'}}
+        url: 'http://localhost:5000/imagesearch',
+        data: bodyFormData,
+        config: { headers: {'Content-Type': 'multipart/form-data' }}
       })
       .then(({data}) => {
+        // for (let i = 0; i < data.length; i++) {
+        //   console.log(data[i]);
+        // }
         this.setState({
-          topSites: data,
-          isLoading: false
+          topSites: data
         });
-        console.log(this.state.data);
       })
       .catch(err => {
         console.log(err);
       })
+      axios({
+          method: 'post',
+          url: 'http://localhost:5000/ela',
+          data: bodyFormData,
+          config: { headers: {'Content-Type': 'multipart/form-data' }}
+        })
+        .then(({data}) => {
+          // console.log(data);
+          this.setState({
+            ela: data
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        })
   }
 
 
-  getTopSites() {
+  getELAoutput(url) {
+    return axios.get(url, {responseType: 'arraybuffer'})
+      .then(response => {
+        let img = new Buffer(response.data, 'binary').toString('base64')
+        this.setState ({
+          image: img
+        })
+      })
+  }
+
+
+  getImageAnalysis() {
+    this.getELAoutput('http://localhost:5000/getelaoutput');
+
+    let imgsrc = 'data:image/jpeg;base64,' + this.state.image;
     let buffer = [];
+    const listItems = this.state.topSites.map((site) =>
+      <li>{site}</li>
+    );
+
     buffer.push(
       <div key={0}>
-        <h2>Image Found:</h2>
+        <img className="elaImage" src={imgsrc} alt='ELA Output' />
+        <h2> <strong>ELA: </strong> </h2>
+        <h4> {this.state.ela} </h4>
         <br />
-        <h4><strong>Site 1: </strong> {this.state.topSites}</h4>
+        <h2> <strong>Sites: </strong> </h2>
+        <ul> {listItems} </ul>
       </div>
     )
     return (
@@ -107,13 +150,14 @@ class ImageAnalysis extends Component {
                       </Dropzone>
                       :
                       <div className="preview">
-                        {this.state.queryImage.map((qImg) => (
+                        {this.state.queryImage.map((qImg,idx) => (
+                          // console.log(qImg.lastModified)
                           <FilePreview file={qImg}>
                             {(preview) => <img
                               className="imagePreview"
                               src={preview}
                               alt="Query Preview"
-                              key={qImg}
+                              key={preview}
                             />}
                           </FilePreview>
                         ))}
@@ -148,7 +192,7 @@ class ImageAnalysis extends Component {
                 Object.keys(this.state.topSites).length !== 0
                 ?
                 <div>
-                  {this.getTopSites()}
+                  {this.getImageAnalysis()}
                 </div>
                 :
                 null
