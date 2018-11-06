@@ -75,21 +75,51 @@ class ImageAnalysis extends Component {
       .catch(err => {
         console.log(err);
       })
+
+      // axios.post('http://localhost:5000/ela', {responseType: 'arraybuffer'})
+      //   .then(response => {
+      //     let img = new Buffer(response.data, 'binary').toString('base64')
+      //     this.setState ({
+      //       image: img
+      //     })
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   })
+
       axios({
           method: 'post',
           url: 'http://localhost:5000/ela',
+          responseType: 'arraybuffer',
           data: bodyFormData,
           config: { headers: {'Content-Type': 'multipart/form-data' }}
         })
-        .then(({data}) => {
-          // console.log(data);
+        .then(({res}) => {
+          console.log(res)
+          let img = new Buffer(res.data, 'binary').toString('base64')
           this.setState({
-            ela: data
+            image: img
           });
         })
         .catch(err => {
           console.log(err);
         })
+
+      // axios({
+      //     method: 'post',
+      //     url: 'http://localhost:5000/ela',
+      //     data: bodyFormData,
+      //     config: { headers: {'Content-Type': 'multipart/form-data' }}
+      //   })
+      //   .then(({data}) => {
+      //     // console.log(data);
+      //     this.setState({
+      //       ela: data
+      //     });
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   })
   }
 
 
@@ -105,19 +135,16 @@ class ImageAnalysis extends Component {
 
 
   getImageAnalysis() {
-    this.getELAoutput('http://localhost:5000/getelaoutput');
-
     let imgsrc = 'data:image/jpeg;base64,' + this.state.image;
     let buffer = [];
     const listItems = this.state.topSites.map((site) =>
       <li>{site}</li>
     );
-
+// <img className="elaImage" src={imgsrc} alt='ELA Output' />
     buffer.push(
       <div key={0}>
-        <img className="elaImage" src={imgsrc} alt='ELA Output' />
         <h2> <strong>ELA: </strong> </h2>
-        <h4> {this.state.ela} </h4>
+        <img className="elaImage" src={imgsrc} alt='ELA Output' />
         <br />
         <h2> <strong>Sites: </strong> </h2>
         <ul> {listItems} </ul>
