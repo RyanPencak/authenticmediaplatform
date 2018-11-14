@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import loadingSpinner from '../Assets/loadingSpinner.gif'
 import './ImageAnalysis.css';
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
@@ -11,15 +10,15 @@ class ImageAnalysis extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
       queryImage: null,
       topSites: {},
-      ela: {},
-      image: null
+      elaImage: null
     }
 
     this.onDropImage = this.onDropImage.bind(this);
     this.resetImage = this.resetImage.bind(this);
+    this.getHost = this.getHost.bind(this);
+    this.getDomain = this.getDomain.bind(this);
     this.ImageAnalysis = this.ImageAnalysis.bind(this);
     this.getImageAnalysis = this.getImageAnalysis.bind(this);
   }
@@ -28,22 +27,6 @@ class ImageAnalysis extends Component {
     this.setState({
       queryImage: dropped_file
     });
-    // let bodyFormData = new FormData();
-    // dropped_file.map((queryImg) => (
-    //   bodyFormData.set('queryImg', queryImg)
-    // ))
-    // axios({
-    //     method: 'post',
-    //     url: 'http://localhost:5000/upload',
-    //     data: bodyFormData,
-    //     config: { headers: {'Content-Type': 'multipart/form-data' }}
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   })
   }
 
   resetImage() {
@@ -52,12 +35,44 @@ class ImageAnalysis extends Component {
     })
   }
 
+  getHost(url) {
+    let host;
+
+    if (url.indexOf("//") > -1) {
+        host = url.split('/')[2];
+    }
+    else {
+        host = url.split('/')[0];
+    }
+
+    //find & remove port number
+    host = host.split(':')[0];
+    //find & remove "?"
+    host = host.split('?')[0];
+
+    return host;
+  }
+
+  getDomain(url) {
+    var domain = this.getHost(url),
+        splitURL = domain.split('.'),
+        len = splitURL.length;
+
+    if (len > 2) {
+        domain = splitURL[len - 2] + '.' + splitURL[len - 1];
+        if (splitURL[len - 2].length === 2 && splitURL[len - 1].length === 2) {
+            domain = splitURL[len - 3] + '.' + domain;
+        }
+    }
+    return domain;
+  }
+
   ImageAnalysis() {
-    this.setState({isLoading: true})
     let bodyFormData = new FormData();
     this.state.queryImage.map((queryImg) => (
       bodyFormData.set('queryImg', queryImg)
     ))
+
     axios({
         method: 'post',
         url: 'http://localhost:5000/imagesearch',
@@ -65,9 +80,6 @@ class ImageAnalysis extends Component {
         config: { headers: {'Content-Type': 'multipart/form-data' }}
       })
       .then(({data}) => {
-        // for (let i = 0; i < data.length; i++) {
-        //   console.log(data[i]);
-        // }
         this.setState({
           topSites: data
         });
@@ -76,71 +88,29 @@ class ImageAnalysis extends Component {
         console.log(err);
       })
 
-      // axios.post('http://localhost:5000/ela', {responseType: 'arraybuffer'})
-      //   .then(response => {
-      //     let img = new Buffer(response.data, 'binary').toString('base64')
-      //     this.setState ({
-      //       image: img
-      //     })
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   })
-
       axios({
           method: 'post',
           url: 'http://localhost:5000/ela',
           responseType: 'arraybuffer',
-          data: bodyFormData,
-          config: { headers: {'Content-Type': 'multipart/form-data' }}
+          data: bodyFormData
         })
-        .then(({res}) => {
-          console.log(res)
+        .then((res) => {
           let img = new Buffer(res.data, 'binary').toString('base64')
           this.setState({
-            image: img
+            elaImage: img
           });
         })
         .catch(err => {
           console.log(err);
         })
-
-      // axios({
-      //     method: 'post',
-      //     url: 'http://localhost:5000/ela',
-      //     data: bodyFormData,
-      //     config: { headers: {'Content-Type': 'multipart/form-data' }}
-      //   })
-      //   .then(({data}) => {
-      //     // console.log(data);
-      //     this.setState({
-      //       ela: data
-      //     });
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   })
   }
-
-
-  getELAoutput(url) {
-    return axios.get(url, {responseType: 'arraybuffer'})
-      .then(response => {
-        let img = new Buffer(response.data, 'binary').toString('base64')
-        this.setState ({
-          image: img
-        })
-      })
-  }
-
 
   getImageAnalysis() {
-    let imgsrc = 'data:image/jpeg;base64,' + this.state.image;
+    let imgsrc = 'data:image/jpeg;base64,' + this.state.elaImage;
     let buffer = [];
-    const listItems = this.state.topSites.map((site) =>
-      <li>{site}</li>
+    const listItems = this.state.topSites.map((url) =>
+      <li><a href={url}>{this.getDomain(url)}</a></li>
     );
-// <img className="elaImage" src={imgsrc} alt='ELA Output' />
     buffer.push(
       <div key={0}>
         <h2> <strong>ELA: </strong> </h2>
@@ -164,7 +134,6 @@ class ImageAnalysis extends Component {
             <Row className="show-grid">
               <Col>
                 <div className="imageDrop">
-                  <h3>Image to Analyze</h3>
                   <div className="import">
                     {
                       this.state.queryImage === null
@@ -178,7 +147,6 @@ class ImageAnalysis extends Component {
                       :
                       <div className="preview">
                         {this.state.queryImage.map((qImg,idx) => (
-                          // console.log(qImg.lastModified)
                           <FilePreview file={qImg}>
                             {(preview) => <img
                               className="imagePreview"
@@ -200,15 +168,7 @@ class ImageAnalysis extends Component {
               {
                 this.state.queryImage !== null
                 ?
-                <div>
-                  {
-                    this.state.isLoading
-                    ?
-                    <img className="loading" src={loadingSpinner} alt='Loading...' />
-                    :
-                    <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)}>Analyze Image</Button>
-                  }
-                </div>
+                <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)}>Analyze Image</Button>
                 :
                 <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)} disabled>Analyze Image</Button>
               }

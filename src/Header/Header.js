@@ -5,7 +5,7 @@ export default class Header extends Component {
   render() {
     return (
         <div className="Header">
-          <h1>Image Analysis Demo</h1>
+          <h1>Expose.i</h1>
         </div>
     );
   }
