@@ -1,32 +1,68 @@
 import React, { Component } from 'react';
 import './ImageAnalysis.css';
+import loadingSpinner from '../Assets/loadingSpinner.gif'
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
-import {Grid, Col, Row, Button} from 'react-bootstrap';
+import {Grid, Col, Row, Button, Jumbotron, Glyphicon} from 'react-bootstrap';
 import FilePreview from 'react-preview-file';
+import Scrollchor from 'react-scrollchor';
 
 class ImageAnalysis extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      windowHeight: 0,
+      windowWidth: 0,
       queryImage: null,
       topSites: {},
-      elaImage: null
+      elaImage: null,
+      isLoading: false
     }
 
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
     this.onDropImage = this.onDropImage.bind(this);
     this.resetImage = this.resetImage.bind(this);
     this.getHost = this.getHost.bind(this);
     this.getDomain = this.getDomain.bind(this);
     this.ImageAnalysis = this.ImageAnalysis.bind(this);
     this.getImageAnalysis = this.getImageAnalysis.bind(this);
+    this.GenerateReport = this.GenerateReport.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+
+  componentWillUnmount() {
+    window.addEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight
+    });
+  }
+
+  handleScroll() {
+    if ( (document.body.scrollTop > (this.state.windowHeight - 1) || document.documentElement.scrollTop > (this.state.windowHeight - 1))  &&  (document.body.scrollTop < (this.state.windowHeight * 2) || document.documentElement.scrollTop < (this.state.windowHeight * 2)) ) {
+      document.getElementById("upBtn").style.display = "block";
+    }
+    else {
+      document.getElementById("upBtn").style.display = "none";
+    }
   }
 
   onDropImage(dropped_file) {
     this.setState({
       queryImage: dropped_file
     });
+    console.log(this.state.queryImage)
   }
 
   resetImage() {
@@ -64,7 +100,8 @@ class ImageAnalysis extends Component {
             domain = splitURL[len - 3] + '.' + domain;
         }
     }
-    return domain;
+    domain = domain.split('.')
+    return domain[0];
   }
 
   ImageAnalysis() {
@@ -81,7 +118,8 @@ class ImageAnalysis extends Component {
       })
       .then(({data}) => {
         this.setState({
-          topSites: data
+          topSites: data,
+          isLoading: false
         });
       })
       .catch(err => {
@@ -109,30 +147,78 @@ class ImageAnalysis extends Component {
     let imgsrc = 'data:image/jpeg;base64,' + this.state.elaImage;
     let buffer = [];
     const listItems = this.state.topSites.map((url) =>
-      <li><a href={url}>{this.getDomain(url)}</a></li>
+      <a href={url}><Button id="websiteLinkButton" bsStyle="default">{this.getDomain(url)}</Button></a>
     );
     buffer.push(
       <div key={0}>
-        <h2> <strong>ELA: </strong> </h2>
         <img className="elaImage" src={imgsrc} alt='ELA Output' />
-        <br />
-        <h2> <strong>Sites: </strong> </h2>
-        <ul> {listItems} </ul>
+        <Grid>
+          <Row className="show-grid">
+            <Col>
+              {listItems[0]}
+            </Col>
+            <Col>
+              {listItems[1]}
+            </Col>
+            <Col>
+              {listItems[2]}
+            </Col>
+          </Row>
+          <Row className="show-grid">
+            <Col>
+              {listItems[3]}
+            </Col>
+            <Col>
+              {listItems[4]}
+            </Col>
+            <Col>
+              {listItems[5]}
+            </Col>
+          </Row>
+        </Grid>
       </div>
     )
     return (
-      <div className="report">
+      <div>
         {buffer}
       </div>
     );
   }
 
+  GenerateReport() {
+    this.setState({
+      isLoading: true
+    });
+    this.ImageAnalysis()
+  }
+
   render() {
       return (
-        <div className="ImageAnalysis">
-          <Grid>
-            <Row className="show-grid">
-              <Col>
+        <div className="ImageAnalysis" id="topOfPage">
+
+          <div className="entrypage">
+            <Jumbotron className="jumbo">
+              <h1 className="header">EXPOSE.i</h1>
+              <h4 className="subheader">Helping you find honesty in the internet.</h4>
+              <Scrollchor to="analysisLink">
+                <Button bsStyle="default" className="downbutton">
+                  <Glyphicon className="buttonicon" glyph="chevron-down"/>
+                </Button>
+              </Scrollchor>
+              <p className="navtitle">Begin</p>
+            </Jumbotron>
+          </div>
+
+          <div className="uploadpage" id="analysisLink">
+            <div className="uploadpagecontainer">
+              <h2> Upload Image </h2>
+
+              <div className="jumbo">
+
+                <div className="topbutton">
+                  <Scrollchor to="topOfPage"><Button id="upBtn" onClick={this.resetImage.bind(this)} bsStyle="default"><Glyphicon glyph="chevron-up" /></Button></Scrollchor>
+                </div>
+
                 <div className="imageDrop">
                   <div className="import">
                     {
@@ -156,37 +242,80 @@ class ImageAnalysis extends Component {
                             />}
                           </FilePreview>
                         ))}
-                        <Button bsSize="xsmall" onClick={this.resetImage.bind(this)}>Remove Image</Button>
                       </div>
                     }
                   </div>
                 </div>
-              </Col>
-            </Row>
 
-            <Row className="show-grid">
-              {
-                this.state.queryImage !== null
-                ?
-                <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)}>Analyze Image</Button>
-                :
-                <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)} disabled>Analyze Image</Button>
-              }
-            </Row>
-
-            <Row className="show-grid">
-              {
-                Object.keys(this.state.topSites).length !== 0
-                ?
-                <div>
-                  {this.getImageAnalysis()}
+                <div className="buttonContainer">
+                  {
+                    this.state.queryImage !== null
+                    ?
+                    <div>
+                      <Scrollchor to="reportLink">
+                        <Button bsStyle="default" className="ImageAnalysisButton" onClick={this.GenerateReport.bind(this)}>
+                          <Glyphicon className="buttonicon" glyph="chevron-down"/>
+                        </Button>
+                      </Scrollchor>
+                    </div>
+                    // <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)}>Analyze Image</Button>
+                    :
+                    <div>
+                      <Button bsStyle="default" className="ImageAnalysisButton" onClick={this.GenerateReport.bind(this)} disabled>
+                        <Glyphicon className="buttonicon" glyph="chevron-down"/>
+                      </Button>
+                    </div>
+                    // <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)} disabled>Analyze Image</Button>
+                  }
                 </div>
-                :
-                null
-              }
-            </Row>
 
-          </Grid>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="reportpage" id="reportLink">
+            <div className="report">
+              {
+                this.state.isLoading
+                ?
+                <img className="loading" src={loadingSpinner} alt='Loading...' />
+                :
+                <div className="loaded">
+                  <h2>Analysis Report</h2>
+                  {
+                    this.state.queryImage !== null
+                    ?
+                    <div className="original">
+                      {this.state.queryImage.map((qImg,idx) => (
+                        <FilePreview file={qImg}>
+                          {(preview) => <img
+                            className="imagePreview"
+                            src={preview}
+                            alt="Query Preview"
+                            key={preview}
+                          />}
+                        </FilePreview>
+                      ))}
+                    </div>
+                    :
+                    null
+                  }
+                  {
+                    Object.keys(this.state.topSites).length !== 0
+                    ?
+                    <div className="analysis">
+                      {this.getImageAnalysis()}
+                    </div>
+                    :
+                    null
+                  }
+                </div>
+              }
+
+            </div>
+          </div>
+
         </div>
       );
   }

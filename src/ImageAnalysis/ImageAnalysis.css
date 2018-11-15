@@ -1,53 +1,194 @@
 .ImageAnalysis {
-  margin: 50px;
-  padding: 20px;
-  background-color: #C0C0C0;
+  font-family: "Open Sans";
+  /* background-color: #c1c1c1; */
+}
+
+.ImageAnalysis .entrypage {
+  padding: 10px;
+  height: 100vh;
+}
+
+.ImageAnalysis .entrypage .jumbo {
+  height: 100%;
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #49494b;
+  color: #dadadb;
+}
+
+.ImageAnalysis .entrypage .header {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ImageAnalysis .entrypage .subheader {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ImageAnalysis .entrypage .downbutton {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  height: 40px;
+  width: 40px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  background-color: #bd8c7d;
+}
+
+.ImageAnalysis .entrypage .navtitle {
+  color: #919193;
+}
+
+.ImageAnalysis .topbutton {
+  position: fixed;
+  top: 5%;
+  right: 4%;
+}
+
+.ImageAnalysis .topbutton #upBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  background-color: #d1bfa7;
+}
+
+.ImageAnalysis .uploadpage {
+  padding: 10px;
+  height: 100vh;
+}
+
+.ImageAnalysis .uploadpage .uploadpagecontainer {
+  padding-left: 30px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #8e8e90;
+}
+
+.ImageAnalysis .uploadpage .uploadpagecontainer .jumbo {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ImageAnalysis .uploadpage .buttonContainer .ImageAnalysisButton {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 40px;
+  width: 40px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  background-color: #d1bfa7;
+}
+
+.ImageAnalysis .uploadpage .buttonContainer .navtitle {
+  color: #ffffff;
 }
 
 .ImageAnalysis .imageDrop {
   text-align: center;
   padding: 10px;
-}
-
-.ImageAnalysis .import {
-  display: flex;
-  justify-content: center;
+  color: #dadadb;
 }
 
 .ImageAnalysis .import .dropZone {
   width: 450px;
   height: 450px;
   border-width: 4px;
-  border-color: rgb(102, 102, 102);
+  border-color: #b6b6b7;
   border-style: dashed;
   border-radius: 5px;
 }
 
-.ImageAnalysis .preview {
-  display: flex;
-  flex-direction: column;
-}
-
-.ImageAnalysis .preview Button {
-  width: 350px;
-  margin-top: 5px;
-}
-
 .ImageAnalysis .imagePreview {
-  display: 'inline';
   width: 450px;
   height: 450px;
 }
 
-.ImageAnalysis .ImageAnalysisButton {
-  width: 100%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+.ImageAnalysis .reportpage {
+  padding: 10px;
+  height: 150vh;
 }
 
-.ImageAnalysis .report {
-  margin: 50px;
+.ImageAnalysis .reportpage .report {
+  background-color: #a4a4a5;
+  height: 100%;
+  width: 100%;
+}
+
+.ImageAnalysis .report .loaded {
+  padding-left: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.ImageAnalysis .report .loaded .original{
+  margin-top: 60px;
   padding: 20px;
-  background-color: #C0C0C0;
+}
+
+.ImageAnalysis .report .loaded .analysis{
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.ImageAnalysis .report .analysis .elaImage {
+  width: 450px;
+  height: 450px;
+}
+
+.ImageAnalysis .loading {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 60px;
+  width: 60px;
+}
+
+.ImageAnalysis #websiteLinkButton {
+  margin: 20px;
+  padding: 10px;
+  background-color: #c1c1c1;
+  width: 100px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+a:link {
+    text-decoration: none;
+    color: #000000;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #000000;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #000000;
+}
+
+a:active {
+    text-decoration: none;
 }
