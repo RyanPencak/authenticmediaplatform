@@ -3,7 +3,7 @@ import './ImageAnalysis.css';
 import loadingSpinner from '../Assets/loadingSpinner.gif'
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
-import {Grid, Col, Row, Button, Jumbotron, Glyphicon} from 'react-bootstrap';
+import {Button, Jumbotron, Glyphicon} from 'react-bootstrap';
 import FilePreview from 'react-preview-file';
 import Scrollchor from 'react-scrollchor';
 
@@ -62,7 +62,6 @@ class ImageAnalysis extends Component {
     this.setState({
       queryImage: dropped_file
     });
-    console.log(this.state.queryImage)
   }
 
   resetImage() {
@@ -101,7 +100,7 @@ class ImageAnalysis extends Component {
         }
     }
     domain = domain.split('.')
-    return domain[0];
+    return domain[0].toUpperCase();
   }
 
   ImageAnalysis() {
@@ -121,6 +120,7 @@ class ImageAnalysis extends Component {
           topSites: data,
           isLoading: false
         });
+        console.log(this.state.topSites);
       })
       .catch(err => {
         console.log(err);
@@ -145,37 +145,61 @@ class ImageAnalysis extends Component {
 
   getImageAnalysis() {
     let imgsrc = 'data:image/jpeg;base64,' + this.state.elaImage;
+    console.log(imgsrc);
     let buffer = [];
     const listItems = this.state.topSites.map((url) =>
       <a href={url}><Button id="websiteLinkButton" bsStyle="default">{this.getDomain(url)}</Button></a>
     );
     buffer.push(
       <div key={0}>
-        <img className="elaImage" src={imgsrc} alt='ELA Output' />
-        <Grid>
-          <Row className="show-grid">
-            <Col>
-              {listItems[0]}
-            </Col>
-            <Col>
-              {listItems[1]}
-            </Col>
-            <Col>
-              {listItems[2]}
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col>
-              {listItems[3]}
-            </Col>
-            <Col>
-              {listItems[4]}
-            </Col>
-            <Col>
-              {listItems[5]}
-            </Col>
-          </Row>
-        </Grid>
+        <div className="elaHeader">
+          <h3>ERROR LEVEL ANALYSIS (ELA)</h3>
+        </div>
+        <div className="flex-grid">
+
+          <div className="col original">
+            <h4>Uploaded Image</h4>
+            {this.state.queryImage.map((qImg,idx) => (
+              <FilePreview file={qImg}>
+                {(preview) => <img
+                  className="imagePreview"
+                  src={preview}
+                  alt="Query Preview"
+                  key={preview}
+                />}
+              </FilePreview>
+            ))}
+          </div>
+          <div className="col">
+            <h4>ELA Result</h4>
+            <img className="elaImage" src={imgsrc} alt='ELA Output' />
+          </div>
+        </div>
+
+        <div className="elaExplanation">
+          <h4>
+            <Glyphicon glyph="warning-sign" /> ELA highlights differences in image compression rates. Areas with uniform coloring will result in uniform pixel brightness.
+            <br/>
+            Be suspicious of dense regions of bright pixels. These regions may have been digitally altered.
+          </h4>
+        </div>
+
+        <div className="topSitesHeader">
+          <h3>TOP SITES WHERE IMAGE IS FOUND</h3>
+        </div>
+
+        <div className="flex-grid">
+          <div className="col">{listItems[0]}</div>
+          <div className="col">{listItems[1]}</div>
+          <div className="col">{listItems[2]}</div>
+        </div>
+
+        <div className="flex-grid">
+          <div className="col">{listItems[3]}</div>
+          <div className="col">{listItems[4]}</div>
+          <div className="col">{listItems[5]}</div>
+        </div>
+
       </div>
     )
     return (
@@ -211,12 +235,12 @@ class ImageAnalysis extends Component {
 
           <div className="uploadpage" id="analysisLink">
             <div className="uploadpagecontainer">
-              <h2> Upload Image </h2>
+              <h2> UPLOAD IMAGE TO ANALYZE </h2>
 
               <div className="jumbo">
 
                 <div className="topbutton">
-                  <Scrollchor to="topOfPage"><Button id="upBtn" onClick={this.resetImage.bind(this)} bsStyle="default"><Glyphicon glyph="chevron-up" /></Button></Scrollchor>
+                  <Scrollchor to="topOfPage"><Button id="upBtn" onClick={this.resetImage.bind(this)} bsStyle="default"><Glyphicon className="buttonicon" glyph="chevron-up" /></Button></Scrollchor>
                 </div>
 
                 <div className="imageDrop">
@@ -257,6 +281,7 @@ class ImageAnalysis extends Component {
                           <Glyphicon className="buttonicon" glyph="chevron-down"/>
                         </Button>
                       </Scrollchor>
+                      <p className="navtitle">Analyze</p>
                     </div>
                     // <Button className="ImageAnalysisButton" bsSize="large" onClick={this.ImageAnalysis.bind(this)}>Analyze Image</Button>
                     :
@@ -279,33 +304,26 @@ class ImageAnalysis extends Component {
               {
                 this.state.isLoading
                 ?
-                <img className="loading" src={loadingSpinner} alt='Loading...' />
+                <div className="loading">
+                  <h2>IMAGE ANALYSIS REPORT</h2>
+                  <img className="spinner" src={loadingSpinner} alt='Loading...' />
+                </div>
                 :
                 <div className="loaded">
-                  <h2>Analysis Report</h2>
+                  <h2>IMAGE ANALYSIS REPORT</h2>
                   {
                     this.state.queryImage !== null
                     ?
-                    <div className="original">
-                      {this.state.queryImage.map((qImg,idx) => (
-                        <FilePreview file={qImg}>
-                          {(preview) => <img
-                            className="imagePreview"
-                            src={preview}
-                            alt="Query Preview"
-                            key={preview}
-                          />}
-                        </FilePreview>
-                      ))}
-                    </div>
-                    :
-                    null
-                  }
-                  {
-                    Object.keys(this.state.topSites).length !== 0
-                    ?
-                    <div className="analysis">
-                      {this.getImageAnalysis()}
+                    <div>
+                      {
+                        Object.keys(this.state.topSites).length !== 0
+                        ?
+                        <div className="analysis">
+                          {this.getImageAnalysis()}
+                        </div>
+                        :
+                        null
+                      }
                     </div>
                     :
                     null
