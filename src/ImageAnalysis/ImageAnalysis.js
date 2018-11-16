@@ -177,11 +177,11 @@ class ImageAnalysis extends Component {
         </div>
 
         <div className="elaExplanation">
-          <h4>
+          <h3>
             <Glyphicon glyph="warning-sign" /> ELA highlights differences in image compression rates. Areas with uniform coloring will result in uniform pixel brightness.
             <br/>
             Be suspicious of dense regions of bright pixels. These regions may have been digitally altered.
-          </h4>
+          </h3>
         </div>
 
         <div className="topSitesHeader">
