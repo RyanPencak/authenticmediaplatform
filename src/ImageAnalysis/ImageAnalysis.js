@@ -178,7 +178,7 @@ class ImageAnalysis extends Component {
 
         <div className="elaExplanation">
           <h3>
-            <Glyphicon glyph="warning-sign" /> ELA highlights differences in image compression rates. Areas with uniform coloring will result in uniform pixel brightness.
+            <Glyphicon glyph="warning-sign" /> ELA highlights differences in image compression rates. Bright pixels can indicate either edges or modified areas.
             <br/>
             Be suspicious of dense regions of bright pixels. These regions may have been digitally altered.
           </h3>
@@ -223,7 +223,7 @@ class ImageAnalysis extends Component {
           <div className="entrypage">
             <Jumbotron className="jumbo">
               <h1 className="header">EXPOSE.i</h1>
-              <h4 className="subheader">Helping you find honesty in the internet.</h4>
+              <h4 className="subheader">Bringing you a transparent and honest internet.</h4>
               <Scrollchor to="analysisLink">
                 <Button bsStyle="default" className="downbutton">
                   <Glyphicon className="buttonicon" glyph="chevron-down"/>
