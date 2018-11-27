@@ -6739,6 +6739,10 @@ react-scripts@2.0.5:
   optionalDependencies:
     fsevents "1.2.4"
 
+react-scroll-box@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/react-scroll-box/-/react-scroll-box-0.3.5.tgz#f3d2d0f78671018908ce3326377f3d2a56421f34"
+
 react-scrollchor@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/react-scrollchor/-/react-scrollchor-6.0.0.tgz#7c2545e743355c0069f4c6a5ab4f9d9875182b4d"

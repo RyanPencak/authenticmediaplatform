@@ -8,9 +8,12 @@ h2 {
   font-size: 40px;
 }
 
-.ImageAnalysis {
-  /* font-family: "Open Sans"; */
-  /* background-color: #c1c1c1; */
+.ImageAnalysis .grade {
+  color: #fc4a1a;
+}
+
+.ImageAnalysis .footnote {
+  color: #f7b733;
 }
 
 .ImageAnalysis .entrypage {

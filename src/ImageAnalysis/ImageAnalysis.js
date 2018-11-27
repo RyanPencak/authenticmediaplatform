@@ -17,6 +17,8 @@ class ImageAnalysis extends Component {
       queryImage: null,
       topSites: {},
       elaImage: null,
+      metadata: null,
+      score: null,
       isLoading: false
     }
 
@@ -109,6 +111,7 @@ class ImageAnalysis extends Component {
       bodyFormData.set('queryImg', queryImg)
     ))
 
+    // top sites
     axios({
         method: 'post',
         url: 'http://localhost:5000/imagesearch',
@@ -120,12 +123,12 @@ class ImageAnalysis extends Component {
           topSites: data,
           isLoading: false
         });
-        console.log(this.state.topSites);
       })
       .catch(err => {
         console.log(err);
       })
 
+      // ela
       axios({
           method: 'post',
           url: 'http://localhost:5000/ela',
@@ -141,11 +144,43 @@ class ImageAnalysis extends Component {
         .catch(err => {
           console.log(err);
         })
+
+        // metadata
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/metadata',
+            data: bodyFormData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+          })
+          .then(({data}) => {
+            this.setState({
+              metadata: data
+            });
+            console.log(this.state.metadata);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+
+        // get score
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/elascore',
+            data: bodyFormData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+          })
+          .then(({data}) => {
+            this.setState({
+              score: data
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          })
   }
 
   getImageAnalysis() {
     let imgsrc = 'data:image/jpeg;base64,' + this.state.elaImage;
-    console.log(imgsrc);
     let buffer = [];
     const listItems = this.state.topSites.map((url) =>
       <a href={url}><Button id="websiteLinkButton" bsStyle="default">{this.getDomain(url)}</Button></a>
@@ -182,6 +217,8 @@ class ImageAnalysis extends Component {
             <br/>
             Be suspicious of dense regions of bright pixels. These regions may have been digitally altered.
           </h3>
+          <br/>
+          <h2 className = "grade"><sup>*</sup>RELIABILITY GRADE: {this.state.score}</h2>
         </div>
 
         <div className="topSitesHeader">
@@ -320,6 +357,7 @@ class ImageAnalysis extends Component {
                         ?
                         <div className="analysis">
                           {this.getImageAnalysis()}
+                          <h4 className="footnote"><sup>*</sup>Grade Based on Predicted Pixel Change Percentage</h4>
                         </div>
                         :
                         null
