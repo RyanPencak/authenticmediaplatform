@@ -1,3 +1,50 @@
+# Web App Architecture
+
+Front End
+-------------------------------------------------------------------------------------
+
+###### App
+  * Main project file that renders ImageAnalysis Component
+
+###### Assets
+  * Contains assets for the web app
+
+###### ImageAnalysis
+  * ImageAnalysis.js: contains main project code, rendering the page components and making AJAX calls to the EXPOSE.I API to generate an image analysis report
+  * ImageAnalysis.css: defines styles for ImageAnalysis.js
+
+
+-------------------------------------------------------------------------------------
+# Running the Web App
+
+Required Packages
+-------------------------------------------------------------------------------------
+
+1.	node and npm
+    * https://www.npmjs.com/get-npmnpm
+
+
+Download Web App Source Files
+-------------------------------------------------------------------------------------
+
+In Linux Terminal:
+1.	git clone git@github.com:RyanPencak/authenticmediaplatform.git
+2.	cd authenticmediaplatform
+
+
+Run Web App Locally
+-------------------------------------------------------------------------------------
+
+In Linux Terminal:
+1.	npm install
+2.	npm start
+
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+# React App Documentation
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
